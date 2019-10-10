@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../common_widgets/placeholder_widget.dart';
@@ -21,14 +18,12 @@ class CurrentLocationWidget extends StatefulWidget {
 }
 
 class _LocationState extends State<CurrentLocationWidget> {
-  Position _lastKnownPosition;
   Position _currentPosition;
 
   @override
   void initState() {
     super.initState();
 
-    _initLastKnownLocation();
     _initCurrentLocation();
   }
 
@@ -37,33 +32,10 @@ class _LocationState extends State<CurrentLocationWidget> {
     super.didUpdateWidget(oldWidget);
 
     setState(() {
-      _lastKnownPosition = null;
       _currentPosition = null;
     });
 
-    _initLastKnownLocation();
     _initCurrentLocation();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> _initLastKnownLocation() async {
-    Position position;
-    try {
-      final Geolocator geolocator = Geolocator()
-        ..forceAndroidLocationManager = !widget.androidFusedLocation;
-      position = await geolocator.getLastKnownPosition(
-          desiredAccuracy: LocationAccuracy.best);
-    } on PlatformException {
-      position = null;
-    }
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _lastKnownPosition = position;
-    });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -93,7 +65,7 @@ class _LocationState extends State<CurrentLocationWidget> {
 
           if (snapshot.data == GeolocationStatus.denied) {
             return const PlaceholderWidget('Access to location denied',
-                'Allow access to the location services for this App using the device settings.');
+                'Allow access to the location services for this App');
           }
 
           return Center(
@@ -123,10 +95,12 @@ class _LocationState extends State<CurrentLocationWidget> {
                 Container(
                   height: 10,
                 ),
-                PlaceholderWidget(
-                  'Speed:',
-                  _currentPosition.speed.toString(),
-                )
+                _currentPosition == null
+                    ? CircularProgressIndicator()
+                    : PlaceholderWidget(
+                        'Speed:',
+                        _currentPosition.speed.toString(),
+                      )
               ],
             ),
           );
@@ -134,10 +108,6 @@ class _LocationState extends State<CurrentLocationWidget> {
   }
 
   String _fusedLocationNote() {
-    if (widget.androidFusedLocation) {
-      return 'Geolocator is using the Android FusedLocationProvider. This requires Google Play Services to be installed on the target device.';
-    }
-
     return 'Coordinates';
   }
 }

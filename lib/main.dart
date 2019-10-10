@@ -12,7 +12,6 @@ void main() => runApp(GeoLogger(
 
 enum TabItem {
   singleLocation,
-  singleFusedLocation,
   locationStream,
   ViewMap,
 }
@@ -62,7 +61,7 @@ class BottomNavigationState extends State<GeoLogger> {
           storage: PositionStorage(),
         );
       case TabItem.singleLocation:
-        return CurrentLocationWidget(androidFusedLocation: false);
+        return CurrentLocationWidget(androidFusedLocation: true);
       case TabItem.ViewMap:
         return ShowMapsWidget(
           storage: PositionStorage(),
@@ -114,8 +113,6 @@ class BottomNavigationState extends State<GeoLogger> {
   String _title(TabItem item) {
     switch (item) {
       case TabItem.singleLocation:
-        return 'Live Location';
-      case TabItem.singleFusedLocation:
         return 'Single (Fused)';
       case TabItem.locationStream:
         return 'Record Location';
@@ -129,8 +126,6 @@ class BottomNavigationState extends State<GeoLogger> {
   IconData _icon(TabItem item) {
     switch (item) {
       case TabItem.singleLocation:
-        return Icons.location_on;
-      case TabItem.singleFusedLocation:
         return Icons.location_on;
       case TabItem.locationStream:
         return Icons.clear_all;

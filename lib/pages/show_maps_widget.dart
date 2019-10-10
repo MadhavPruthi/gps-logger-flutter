@@ -19,6 +19,7 @@ class _ShowMapsState extends State<ShowMapsWidget> {
   GoogleMapController mapController;
   LatLng _center = const LatLng(30.768088, 76.786227);
   final Set<Marker> _markers = Set();
+  // ignore: avoid_init_to_null
   List<FileSystemEntity> files = null;
   String _path = 'One';
   bool _filePicked = false;
@@ -162,8 +163,11 @@ class _ShowMapsState extends State<ShowMapsWidget> {
   }
 
   Future<Position> currentLocation() async {
-    Position position = await Geolocator().getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation);
+
+    Geolocator geoLocator = Geolocator()..forceAndroidLocationManager = true;
+    Position position = await geoLocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+    print("GOT ITTTTTTTTTTTT");
     return position;
   }
 
