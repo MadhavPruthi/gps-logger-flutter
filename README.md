@@ -1,4 +1,4 @@
-# lat_long
+# GPS Logger
 
 A new Flutter application.
 
